@@ -66,140 +66,80 @@ Check whether \code{fn} does not return any \code{NaN}.\cr
 The only stopping rule is the number of iterations.
 }
 \examples{
-############################################################################################
+####################################################################################
 ## Two-Peak Trap:  global maximum on x = 20 and local maximum on x = 0
-fn1 <- function(x)
-  y <- (160/15) * (15 - x) * (x < 15) + 40 * (x - 15) * (x >= 15)
+two_peak <- function(x)
+ y <- (160/15) * (15 - x) * (x < 15) + 40 * (x - 15) * (x >= 15)
 
-ferpsols(fn1, 0, 20, control = list(seed = 66, swarm = 50))
+ferpsols(two_peak, 0, 20, control = list(seed = 66, swarm = 50))
 
 # without local search
-ferpsols(fn1, 0, 20, control = list(seed = 66, swarm = 50, local = FALSE))
+ferpsols(two_peak, 0, 20, control = list(seed = 66, swarm = 50))
 
 # without refining and local search
-ferpsols(fn1, 0, 20, control = list(seed = 66, swarm = 50, local = FALSE, hybrid = FALSE))
+ferpsols(two_peak, 0, 20, control = list(seed = 66, swarm = 50,  hybrid = FALSE))
 
-
-########################################################################################
-## Central Two-Peak Trap: one global maximum on x = 20
-fn2 <- function(x)
-  y <- (x <= 10) * 16 * x + (x > 10 && x < 15) * 32 * (15 - x) + (x >= 15) * 40 * (x - 15)
-
-ferpsols(fn2, 0, 20, control = list(local = TRUE, seed = 66, swarm = 50))
-
-
-
-########################################################################################
-# Five-Uneven-Peak Trap: two global maxima on 0 and 30 and three local maxima
-fn3 <- function(x){
-  y <- (x <= 2.5) * 80 * (2.5 - x) + (x > 2.5 && x <= 5) * 64 * (x - 2.5) +
-   (x > 5 && x <= 7.5) * 64 * (7.5 - x) + (x > 7.5 && x <= 12.5) * 28 * (x - 7.5) +
-    (x > 12.5 && x <= 17.5) * 28 * (17.5 - x) + (x > 17.5 && x <= 22.5) * 32 * (x - 17.5) +
-     (x > 22.5 && x <= 27.5) * 32 * (27.5 - x) + (x > 27.5) * 80 * (x -27.5)
-}
-
-ferpsols(fn3, 0, 30, control = list(seed = 66, swarm = 50))
-## only the global maximum has been found
-
-########################################################################################
-# Equal Maxima: five global maxima on x = 0.9, 0.7, 0.1, 0.5, 0.3
-fn4 <- function(x)
-  y <- (sin(5 * pi * x))^6
-
-ferpsols(fn4, 0, 1, control = list(seed = 66, swarm = 50))
-
-########################################################################################
+ ####################################################################################
 # Decreasing Maxima: one global on x = 0.1 and four local maxima
-fn5 <- function(x)
-  y <- exp(-2 * log(2) * ((x - 0.1)/0.8)^2) * (sin(5 * pi * x))^6
+dmaxima <- function(x)
+ y <- exp(-2 * log(2) * ((x - 0.1)/0.8)^2) * (sin(5 * pi * x))^6
 
-ferpsols(fn5, 0, 1, control = list(seed = 66, swarm = 50))
-# the local maxima can not be found
+res <- ferpsols(dmaxima, 0, 1, control = list(seed = 66, swarm = 100))
+unique(round(res$maxima, 5)) ## ferpsols can not find the local maxima
 
+## plot
+x <- seq(0, 1, length.out = 400)
+plot(x,  dmaxima(x), type = "l")
 
-########################################################################################
-#  Uneven Maxima: global on x = .93390 0.24666 0.68142 0.45063 0.07970
-fn6 <- function(x)
-  y <- (sin(5 * pi * (x^0.75 - 0.05)))^6
-
-ferpsols(fn6, 0, 1, control = list(seed = 66, swarm = 50))
-
-########################################################################################
-# Uneven Decreasing Maxima: global maximum on x = 0.079699 and four local maxima
-fn7 <- function(x)
-  y <- exp(-2 * log(2) * ((x - 0.08)/0.854)^2) * (sin(5 * pi * (x^(3/4) - 0.05)))^6
-
-ferpsols(fn7, 0, 1, control = list(seed = 66))
-# local maxima can not be found
-
-########################################################################################
+####################################################################################
 # Himmelblau's function: four global optima on
 # x = c(-2.80512, 3.13131), c(3.00000, 2.00000), c(-3.77931, -3.28319) and c(3.58443, -1.84813)
-fn8 <- function(x)
-  y <- -(x[1] * x[1] + x[2] - 11)^2 - (x[1] + x[2] * x[2] - 7)^2
+Himmelblau <- function(x){
+ y <- - (x[1]^2 + x[2] - 11)^2 - (x[1] + x[2]^2 - 7)^2
+ return(y)
+}
 
-test <- ferpsols(fn8, c(-6, -6), c(6, 6), control = list(seed = 66, swarm = 70))
-unique(round(test$maxima, 5)) # can not find one of the local maxima
 
-########################################################################################
+res <- ferpsols(Himmelblau, c(-6, -6), c(6, 6), control = list(seed = 66, swarm = 50))
+unique(round(res$maxima, 5))
+
+Himmelblau_plot <- function(x, y)
+ Himmelblau(x = c(x, y))
+Himmelblau_plot <- Vectorize(Himmelblau_plot)
+x <- y <- seq(-6, 6, length.out = 100)
+persp(x, y, z = outer(X = x, Y = y, FUN = Himmelblau_plot))
+
+####################################################################################
 # Six-Hump Camel Back: two global and two local maxima
-fn9 <- function(x){
-  factor1 <- (4 - 2.1 * (x[1]^2) + (x[1]^4)/3) * (x[1]^2) + x[1] * x[2]
-  factor2 <- (-4 + 4 * (x[2]^2)) * (x[2]^2)
-  y <- -4 * (factor1 + factor2)
-  return(y)
+Six_Hump <- function(x){
+ factor1 <- (4 - 2.1 * (x[1]^2) + (x[1]^4)/3) * (x[1]^2) + x[1] * x[2]
+ factor2 <- (-4 + 4 * (x[2]^2)) * (x[2]^2)
+ y <- -4 * (factor1 + factor2)
+ return(y)
 }
-ferpsols(fn9, c(-1.9, -1.1), c(1.9, 1.1), control = list(seed = 66, swarm = 50))
-# global on c(-0.08984, 0.71266) and c(0.08984, -0.71266)
+res <- ferpsols(Six_Hump, c(-1.9, -1.1), c(1.9, 1.1), control = list(seed = 66, swarm = 200))
+unique(round(res$maxima, 5)) ## can not find the local maxima
 
-
-########################################################################################
-# Shekel's foxholes: one global and twenty four local maxima
-fn10 <- function(q){
-  x <- q[1]
-  y <- q[2]
-
- i <- 1:24
-  a <- 16 * ((i \%\% 5) - 2)
-  b <- 16 * (floor(i/5) - 2)
-  out <- 500 - 1/(.002 + sum(1/(1 + i + (x - a)^6 + (y - b)^6)))
-  return(out)
-}
-
-test <- ferpsols(fn10, rep(-65.536, 2), rep(65.536, 2), control = list(seed = 66, swarm = 100))
-unique(round(test$maxima, 5))
-########################################################################################
-# 2D Inverted Shubert function :
+####################################################################################
+## 2D Inverted Shubert function :
 # The global minima: 18 global minima  f(x*) = -186.7309.
 # the local maxima: sevral
 
-fn11 <- function(x){
-
+Shubert <- function(x){
    j <- 1:5
-   out <- -sum(j * cos((j + 1) * x[1] + j)) * sum(j * cos((j + 1) * x[2] + j))
+   out <- -(sum(j * cos((j + 1) * x[1] + j)) * sum(j * cos((j + 1) * x[2] + j)))
    return(out)
 }
 
-test <- ferpsols(fn11, rep(-10, 2), rep(10, 2), control = list(seed = 66, swarm = 250))
-unique(round(test$maxima, 5)) ## all global maxima but not local maxima
+res <- ferpsols(Shubert, rep(-10, 2), rep(10, 2), control = list(seed = 66, swarm = 200))
+unique(round(res$maxima, 5)) ## only the global maxima are found
 
-
-########################################################################################
-# Inverted Vincent function: 6^n peaks
-fn12 <- function(x, n)
-  1/n * sum(sin(10 * log(x)))
-\dontrun{
-test <- ferpsols(fn12, .25, 10, control = list(seed = 66, swarm = 150), n = 1)
-unique(round(test$maxima, 5))
-
-
-test <- ferpsols(fn12, rep(.25, 2), rep(10, 2), control = list(seed = 66, swarm = 2000), n = 2)
-unique(round(test$maxima, 5))
-
-
-ferpsols(fn12, rep(.25, 3), rep(10, 3), control = list(seed = 66, swarm = 1000), n = 3)
-}
-
+## plotting
+Shubert_plot <- function(x, y)
+ Shubert(x = c(x, y))
+Shubert_plot <- Vectorize(Shubert_plot)
+y <- x <- seq(-10, 10, length.out = 40)
+persp(x, y, z = outer(X = x, Y = y, FUN =Shubert_plot))
 }
 \references{
 Qu, B. Y., Liang, J. J., & Suganthan, P. N. (2012). Niching particle swarm optimization with local search for multi-modal optimization. Information Sciences, 197, 131-143.\cr

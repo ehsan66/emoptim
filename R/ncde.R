@@ -69,81 +69,81 @@
 #' population is expected to locate multiple optimal solutions in a single run (Qu et al., 2012).\cr
 #'
 #' @examples
-#'  ####################################################################################
-#'  ## Two-Peak Trap:  global maximum on x = 20 and local maximum on x = 0
-#' two_peak <- function(x)
-#'    y <- (160/15) * (15 - x) * (x < 15) + 40 * (x - 15) * (x >= 15)
+#'####################################################################################
+#'## Two-Peak Trap:  global maximum on x = 20 and local maximum on x = 0
+#'two_peak <- function(x)
+#'  y <- (160/15) * (15 - x) * (x < 15) + 40 * (x - 15) * (x >= 15)
 #'
-#'  ncde(two_peak, 0, 20, control = list(seed = 66, NP = 50))
+#'ncde(two_peak, 0, 20, control = list(seed = 66, NP = 50))
 #'
-#'  # without local search
-#'  ncde(two_peak, 0, 20, control = list(seed = 66, NP = 50))
+#'# without local search
+#'ncde(two_peak, 0, 20, control = list(seed = 66, NP = 50))
 #'
-#'  # without refining and local search
-#'  ncde(two_peak, 0, 20, control = list(seed = 66, NP = 50,  hybrid = FALSE))
-#'
-#'  ####################################################################################
-#' # Decreasing Maxima: one global on x = 0.1 and four local maxima
-#' dmaxima <- function(x)
-#'   y <- exp(-2 * log(2) * ((x - 0.1)/0.8)^2) * (sin(5 * pi * x))^6
-#'
-#' res <- ncde(dmaxima, 0, 1, control = list(seed = 66, NP = 10))
-#' unique(round(res$maxima, 5)) ## ferpsols can not find the local maxima
-#'
-#' ## plot
-#' x <- seq(0, 1, length.out = 400)
-#' plot(x,  dmaxima(x), type = "l")
+#'# without refining and local search
+#'ncde(two_peak, 0, 20, control = list(seed = 66, NP = 50,  hybrid = FALSE))
 #'
 #'  ####################################################################################
-#' # Himmelblau's function: four global optima on
-#' # x = c(-2.80512, 3.13131), c(3.00000, 2.00000), c(-3.77931, -3.28319) and c(3.58443, -1.84813)
-#' Himmelblau <- function(x){
-#'   y <- - (x[1]^2 + x[2] - 11)^2 - (x[1] + x[2]^2 - 7)^2
-#'   return(y)
-#' }
+#'# Decreasing Maxima: one global on x = 0.1 and four local maxima
+#'dmaxima <- function(x)
+#'  y <- exp(-2 * log(2) * ((x - 0.1)/0.8)^2) * (sin(5 * pi * x))^6
+#'
+#'res <- ncde(dmaxima, 0, 1, control = list(seed = 66, NP = 10))
+#'unique(round(res$maxima, 5)) ## ferpsols can not find the local maxima
+#'
+#'## plot
+#'x <- seq(0, 1, length.out = 400)
+#'plot(x,  dmaxima(x), type = "l")
+#'
+#'####################################################################################
+#'# Himmelblau's function: four global optima on
+#'# x = c(-2.80512, 3.13131), c(3.00000, 2.00000), c(-3.77931, -3.28319) and c(3.58443, -1.84813)
+#'Himmelblau <- function(x){
+#'  y <- - (x[1]^2 + x[2] - 11)^2 - (x[1] + x[2]^2 - 7)^2
+#'  return(y)
+#'}
 #'
 #'
-#' res <- ncde(Himmelblau, c(-6, -6), c(6, 6), control = list(seed = 66, NP = 50))
-#' unique(round(res$maxima, 5))
+#'res <- ncde(Himmelblau, c(-6, -6), c(6, 6), control = list(seed = 66, NP = 50))
+#'unique(round(res$maxima, 5))
 #'
 #'
-#' Himmelblau_plot <- function(x, y)
-#'   Himmelblau(x = c(x, y))
-#' Himmelblau_plot <- Vectorize(Himmelblau_plot)
-#' x <- y <- seq(-6, 6, length.out = 100)
-#' persp(x, y, z = outer(X = x, Y = y, FUN = Himmelblau_plot))
+#'Himmelblau_plot <- function(x, y)
+#'  Himmelblau(x = c(x, y))
+#'Himmelblau_plot <- Vectorize(Himmelblau_plot)
+#'x <- y <- seq(-6, 6, length.out = 100)
+#'persp(x, y, z = outer(X = x, Y = y, FUN = Himmelblau_plot))
 #'
-#'  ####################################################################################
-#' # Six-Hump Camel Back: two global and two local maxima
-#' Six_Hump <- function(x){
-#'   factor1 <- (4 - 2.1 * (x[1]^2) + (x[1]^4)/3) * (x[1]^2) + x[1] * x[2]
-#'   factor2 <- (-4 + 4 * (x[2]^2)) * (x[2]^2)
-#'   y <- -4 * (factor1 + factor2)
-#'   return(y)
-#' }
-#' res <- ncde(Six_Hump, c(-1.9, -1.1), c(1.9, 1.1), control = list(seed = 66, NP = 10))
-#' unique(round(res$maxima, 5))
+#'####################################################################################
+#'# Six-Hump Camel Back: two global and two local maxima
+#'Six_Hump <- function(x){
+#'  factor1 <- (4 - 2.1 * (x[1]^2) + (x[1]^4)/3) * (x[1]^2) + x[1] * x[2]
+#'  factor2 <- (-4 + 4 * (x[2]^2)) * (x[2]^2)
+#'  y <- -4 * (factor1 + factor2)
+#'  return(y)
+#'}
+#'res <- ncde(Six_Hump, c(-1.9, -1.1), c(1.9, 1.1), control = list(seed = 66, NP = 10))
+#'unique(round(res$maxima, 5))
 #'
-#'  ####################################################################################
-#'  ## 2D Inverted Shubert function :
-#'  # The global minima: 18 global minima  f(x*) = -186.7309.
-#'  # the local maxima: sevral
+#'####################################################################################
+#'## 2D Inverted Shubert function :
+#'# The global minima: 18 global minima  f(x*) = -186.7309.
+#'# the local maxima: sevral
 #'
-#'  Shubert <- function(x){
-#'     j <- 1:5
-#'     out <- -(sum(j * cos((j + 1) * x[1] + j)) * sum(j * cos((j + 1) * x[2] + j)))
-#'     return(out)
-#'  }
+#'Shubert <- function(x){
+#'    j <- 1:5
+#'    out <- -(sum(j * cos((j + 1) * x[1] + j)) * sum(j * cos((j + 1) * x[2] + j)))
+#'    return(out)
+#'}
 #'
-#'  res <- ncde(Shubert, rep(-10, 2), rep(10, 2), control = list(seed = 66, NP = 70))
-#'  unique(round(res$maxima, 5)) ## all global maxima but not local maxima
+#'res <- ncde(Shubert, rep(-10, 2), rep(10, 2), control = list(seed = 66, NP = 70))
+#'unique(round(res$maxima, 5)) ## all global maxima but not local maxima
 #'
-#'  ## plotting
-#' Shubert_plot <- function(x, y)
-#'   Shubert(x = c(x, y))
-#' Shubert_plot <- Vectorize(Shubert_plot)
-#'  y <- x <- seq(-10, 10, length.out = 40)
-#'  persp(x, y, z = outer(X = x, Y = y, FUN =Shubert_plot))
+#'## plotting
+#'Shubert_plot <- function(x, y)
+#'  Shubert(x = c(x, y))
+#'Shubert_plot <- Vectorize(Shubert_plot)
+#'y <- x <- seq(-10, 10, length.out = 40)
+#'persp(x, y, z = outer(X = x, Y = y, FUN =Shubert_plot))
 #' @export
 
 
