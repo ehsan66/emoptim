@@ -1,0 +1,16 @@
+Package: emoptim
+Type: Package
+Title: Evolutionary multimodal optimimization algorithms
+Version: 0.1.0
+Authors@R: c(person("Ehsan", "Masoudi", role = c("aut", "cre"),  email = "ehsan.masoudi@wwu.de"),  person("Heinz", "Holling", role = "aut"))
+Description: Multimodal optimization is concerned with locating multiple optima in one single run. The current algorithms are are
+  i) niching Particle Swarm Optimization with local search and ii) Differential Evolution with neighborhood
+  mutation to slove multimodal optimization problems.
+Depends:
+    R (>= 3.1.3)
+License: GPL (>= 2)
+LazyData: true
+LinkingTo: Rcpp
+Imports:
+    Rcpp, lhs
+RoxygenNote: 5.0.1
