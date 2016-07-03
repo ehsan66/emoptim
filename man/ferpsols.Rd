@@ -136,10 +136,10 @@ ferpsols(fn7, 0, 1, control = list(seed = 66))
 # Himmelblau's function: four global optima on
 # x = c(-2.80512, 3.13131), c(3.00000, 2.00000), c(-3.77931, -3.28319) and c(3.58443, -1.84813)
 fn8 <- function(x)
-  y <- 200-(x[1] * x[1] + x[2] - 11)^2 - (x[1] + x[2] * x[2] - 7)^2
+  y <- -(x[1] * x[1] + x[2] - 11)^2 - (x[1] + x[2] * x[2] - 7)^2
 
-test <- ferpsols(fn8, c(-6, -6), c(6, 6), control = list(seed = 66, swarm = 50))
-unique(round(test$maxima, 5))
+test <- ferpsols(fn8, c(-6, -6), c(6, 6), control = list(seed = 66, swarm = 70))
+unique(round(test$maxima, 5)) # can not find one of the local maxima
 
 ########################################################################################
 # Six-Hump Camel Back: two global and two local maxima
@@ -169,7 +169,9 @@ fn10 <- function(q){
 test <- ferpsols(fn10, rep(-65.536, 2), rep(65.536, 2), control = list(seed = 66, swarm = 100))
 unique(round(test$maxima, 5))
 ########################################################################################
-## 2D Inverted Shubert function : eighteen global maxima and many local
+# 2D Inverted Shubert function :
+# The global minima: 18 global minima  f(x*) = -186.7309.
+# the local maxima: sevral
 
 fn11 <- function(x){
 
