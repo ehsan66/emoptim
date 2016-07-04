@@ -105,7 +105,7 @@
 #'Himmelblau_plot <- Vectorize(Himmelblau_plot)
 #'x <- y <- seq(-6, 6, length.out = 100)
 #'persp(x, y, z = outer(X = x, Y = y, FUN = Himmelblau_plot))
-#'
+#'\dontrun{
 #'####################################################################################
 #'# Six-Hump Camel Back: two global and two local maxima
 #'Six_Hump <- function(x){
@@ -137,6 +137,7 @@
 #'Shubert_plot <- Vectorize(Shubert_plot)
 #'y <- x <- seq(-10, 10, length.out = 40)
 #'persp(x, y, z = outer(X = x, Y = y, FUN =Shubert_plot))
+#'}
 #' @importFrom lhs randomLHS augmentLHS
 #' @importFrom stats dist optim runif
 #' @export
