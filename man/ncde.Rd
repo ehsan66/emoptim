@@ -115,7 +115,7 @@ Himmelblau_plot <- function(x, y)
 Himmelblau_plot <- Vectorize(Himmelblau_plot)
 x <- y <- seq(-6, 6, length.out = 100)
 persp(x, y, z = outer(X = x, Y = y, FUN = Himmelblau_plot))
-
+\dontrun{
 ####################################################################################
 # Six-Hump Camel Back: two global and two local maxima
 Six_Hump <- function(x){
@@ -147,6 +147,7 @@ Shubert_plot <- function(x, y)
 Shubert_plot <- Vectorize(Shubert_plot)
 y <- x <- seq(-10, 10, length.out = 40)
 persp(x, y, z = outer(X = x, Y = y, FUN =Shubert_plot))
+}
 }
 \references{
 Qu, B. Y., Suganthan, P. N., & Liang, J. J. (2012). Differential evolution with neighborhood mutation for multimodal optimization. IEEE transactions on evolutionary computation, 16(5), 601-614.\cr
