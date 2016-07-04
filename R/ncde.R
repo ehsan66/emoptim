@@ -81,7 +81,7 @@
 #'
 #'# without refining and local search
 #'ncde(two_peak, 0, 20, control = list(seed = 66, NP = 50,  hybrid = FALSE))
-#'
+#'\dontrun{
 #'  ####################################################################################
 #'# Decreasing Maxima: one global on x = 0.1 and four local maxima
 #'dmaxima <- function(x)
@@ -112,7 +112,7 @@
 #'Himmelblau_plot <- Vectorize(Himmelblau_plot)
 #'x <- y <- seq(-6, 6, length.out = 100)
 #'persp(x, y, z = outer(X = x, Y = y, FUN = Himmelblau_plot))
-#'\dontrun{
+#'
 #'####################################################################################
 #'# Six-Hump Camel Back: two global and two local maxima
 #'Six_Hump <- function(x){
