@@ -1,11 +1,9 @@
 Package: emoptim
 Type: Package
 Title: Evolutionary Multimodal Optimimization
-Version: 0.1.0
-Authors@R: c(person("Ehsan", "Masoudi", role = c("aut", "cre"),  email = "ehsan.masoudi@wwu.de"),  person("Heinz", "Holling", role = "aut"))
-Description: Multimodal optimization is concerned with locating multiple optima in one single run. The current algorithms are are
-  i) niching Particle Swarm Optimization with local search and ii) Differential Evolution with neighborhood
-  mutation to solve multimodal optimization problems.
+Version: 0.9.0
+Authors@R: c(person("Ehsan", "Masoudi", role = c("aut", "trl", "cre"),  email = "ehsan.masoudi@wwu.de"))
+Description: Multimodal optimization is concerned with locating multiple optima in one single run. The current implemented algorithms are i) Fitness-Euclidean distance Ratio Particle Swarm Optimization with Local Search (FERPSOLS) and ii) Neighborhood based Crowding Differential Evolution (NCDE) to solve multimodal optimization problems. FERPSOLS is suitable for multiglobal optimization and NCDE has better performance for multilocal optimization problems.
 Depends:
     R (>= 3.1.3)
 License: GPL (>= 2)

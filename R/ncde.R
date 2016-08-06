@@ -1,7 +1,8 @@
 #'  Neighborhood based crowding Differential Evolution (NCDE)  for multimodal optimization
 #'
 #'
-#'  A niching differential evolution (DE) algorithm with neighborhood mutation strategy to solve multimodal optimization problems.
+#'  A niching differential evolution (DE) algorithm with neighborhood mutation strategy to
+#'   solve multimodal optimization problems.
 #'
 #'
 #'
@@ -14,20 +15,8 @@
 #'
 #' @references
 #' Qu, B. Y., Suganthan, P. N., & Liang, J. J. (2012). Differential evolution with neighborhood mutation for multimodal optimization. IEEE transactions on evolutionary computation, 16(5), 601-614.\cr
-#'  Based on a MATLAB code that can be found in Suganthan's home page.
+#'  Based on  MATLAB code that can be found in Suganthan's home page.
 #'
-#' @note
-#' The function is maximized.\cr
-#'
-#'
-#' Check whether \code{fn} does not return any \code{NaN}.\cr
-#'
-#' The only stopping rule is the number of iterations.\cr
-#'
-#' The implemented algorithm here slightly differs from the original
-#'  MATLAB code in a way that the off-springs for all \code{NP} members calculated by vectorization (\code{sapply})
-#'   and not with \code{for} loop as the original MATLAB code.
-#' @details
 #'
 #' @details
 #'
@@ -36,7 +25,7 @@
 #'   \item{\code{iter}}{number of iterations. Defaults to \code{200}.}
 #'   \item{\code{SF}}{F is a scale factor in \eqn{[0, 2]} used for scaling the differential vector. Defaults to \code{0.9}.}
 #'   \item{\code{CR}}{crossover probability from \eqn{[0, 1]}. Defaults to \code{0.2}.}
-#'   \item{\code{NP}}{Population size. Defaults to \code{10 * length(lower)}.}
+#'   \item{\code{NP}}{Population size. Must be larger than 8. Defaults to \code{10 * length(lower)}. }
 
 #'   \item{\code{seed}}{random seed.}
 #'   \item{\code{hybrid}}{logical; if true, before quiting the algorithm,  an \code{L-BFGS-B}
@@ -44,12 +33,20 @@
 #'      Defaults to \code{TRUE}. Note that no attempt is done to control the maximal number of
 #'       function evaluations within the local search step (this can be done separately through \code{hybrid.control})
 #'       }
-#'    \item{\code{hybrid_control}}{List with any additional control parameters to pass on to \code{\link{stats}{optim}}
+#'    \item{\code{contr_hybrid}}{List with any additional control parameters to pass on to \code{\link{stats}{optim}}
 #'     when using \code{L-BFGS-B} for the local search. Defaults to \code{NULL}.}
 #' }
 #'
 #' The DE strategy is 'DE/rand/1'.\cr
+#' \code{fn} is maximized.\cr
+#' The benchmarks show that \code{\link{ncde}} is more efficient than \code{\link{ferpsols}}
+#' in finding all local maxima. \cr
+#' \code{fn} must not return any \code{NaN}.\cr
+#' The only stopping rule is the number of iterations.\cr
 #'
+#' The implemented algorithm here slightly differs from the original
+#'  MATLAB code in a way that the off-springs for all \code{NP} members calculated by vectorization (\code{sapply})
+#'   and not with \code{for} loop as the original MATLAB code.\cr
 #' @return
 #'  a list contains:
 #' \describe{
@@ -148,8 +145,7 @@
 #' @export
 
 
-ncde <-  function(fn, lower, upper, control = list(),...){
-
+ncde <-  function(fn, lower, upper, control = NULL,...){
   if (missing(fn))
     stop("'fn' is missing")
   if (missing(fn))
@@ -175,7 +171,8 @@ ncde <-  function(fn, lower, upper, control = list(),...){
   if (is.null(control$NP)) ## humber of intial solutions
     control$NP <- 10 * length(lower)
   NP <- control$NP
-
+  if (NP <= 8)
+    stop("'NP' must be larger than 8")
 
   ### comomon param
   if (is.null(control$iter))
@@ -185,8 +182,8 @@ ncde <-  function(fn, lower, upper, control = list(),...){
     set.seed(control$seed)
   if (is.null(control$hybrid))
     control$hybrid <- TRUE
-  if (is.null(control$hybrid_control))
-    control$hybrid_control <- NULL
+  if (is.null(control$contr_hybrid))
+    control$contr_hybrid <- NULL
 
   ##############################################################################
   ##initializing
@@ -223,66 +220,69 @@ ncde <-  function(fn, lower, upper, control = list(),...){
     # Moreover, the performance of algorithm is not sensitive to the
     # change of the neighborhood size as evidenced in Table XXI (NCDE).
 
-    if (NP <= 200)
-      neigh_size <- 5 + 5 * ((maxiter - ii)/maxiter) else
-        neigh_size <- 20 + 30 * ((maxiter- ii)/maxiter)
-      # if neigh_size is less than 5 it produces an error in DE when we want to sample pm_id
-      neigh_size <- floor(neigh_size)
-      ## neigh_size is the number of elemenst in subpoulation
-      ##########################################################################
 
-      ##########################################################################
-      # computing the euclidean distance
-      euc_dist  <- as.matrix(dist(pop, method = "euclidean"))
-      ##########################################################################
+    if ((NP <= 8))
+      neigh_size <- 2 + 2 * ((maxiter - ii)/maxiter) else
+        if (NP <= 200)
+          neigh_size <- 5 + 5 * ((maxiter - ii)/maxiter) else
+            neigh_size <- 20 + 30 * ((maxiter- ii)/maxiter)
+          # if neigh_size is less than 5 it produces an error in DE when we want to sample pm_id
+          neigh_size <- floor(neigh_size)
+          ## neigh_size is the number of elemenst in subpoulation
+          ##########################################################################
 
-      ###########################################################################
-      ## producing the off spring u_i
-      ## producing the ofsprings u_i in each subpopulation_i that is pop[order(euc_dist[j, ]), ][1:neigh_size,]
-      ui <- t(sapply(1:NP, function(j)DE(newpop = pop[order(euc_dist[j, ]), ,drop = FALSE][1:neigh_size, , drop = FALSE],
-                                         bestpop = pop[j, , drop = FALSE],
-                                         target = pop[j, , drop = FALSE],
-                                         st = control$st, ## strategy
-                                         SF = control$SF,
-                                         CR = control$CR,
-                                         lower = lower,
-                                         upper = upper,
-                                         dimension = D)))
-      if (D == 1)
-        ui <- t(ui)
-      ##########################################################################
+          ##########################################################################
+          # computing the euclidean distance
+          euc_dist  <- as.matrix(dist(pop, method = "euclidean"))
+          ##########################################################################
 
-      ##########################################################################
-      # compute the cost function for u_i
-      tempval <- apply(ui, MARGIN = 1, fn1)
-      nfeval <- nfeval + NP ## update number of function evaluations.
-      ##########################################################################
+          ###########################################################################
+          ## producing the off spring u_i
+          ## producing the ofsprings u_i in each subpopulation_i that is pop[order(euc_dist[j, ]), ][1:neigh_size,]
+          ui <- t(sapply(1:NP, function(j)DE(newpop = pop[order(euc_dist[j, ]), ,drop = FALSE][1:neigh_size, , drop = FALSE],
+                                             bestpop = pop[j, , drop = FALSE],
+                                             target = pop[j, , drop = FALSE],
+                                             st = control$st, ## strategy
+                                             SF = control$SF,
+                                             CR = control$CR,
+                                             lower = lower,
+                                             upper = upper,
+                                             dimension = D)))
+          if (D == 1)
+            ui <- t(ui)
+          ##########################################################################
 
-      ##########################################################################
-      for(i in 1:NP){
+          ##########################################################################
+          # compute the cost function for u_i
+          tempval <- apply(ui, MARGIN = 1, fn1)
+          nfeval <- nfeval + NP ## update number of function evaluations.
+          ##########################################################################
 
-        ########################################################################
-        ## randomly perumted the population
-        pp <- sample(1:NP, size = NP, replace = FALSE)
-        qq <- pop[pp, , drop = FALSE]
-        ## calulate the distance of each ui to qq and find the smallest one
-        min_id <- which.min(sqrt(apply(sweep(qq, 2, ui[i, , drop = FALSE])^2, 1, sum)))
+          ##########################################################################
+          for(i in 1:NP){
 
-        if (popval[pp[min_id]]< tempval[i]){
-          pop[pp[min_id], ] <- ui[i, , drop = FALSE]
-          popval[pp[min_id]] <- tempval[i]
-        }
-      }
-      ##########################################################################
+            ########################################################################
+            ## randomly perumted the population
+            pp <- sample(1:NP, size = NP, replace = FALSE)
+            qq <- pop[pp, , drop = FALSE]
+            ## calulate the distance of each ui to qq and find the smallest one
+            min_id <- which.min(sqrt(apply(sweep(qq, 2, ui[i, , drop = FALSE])^2, 1, sum)))
 
-      ##########################################################################
-      #### vectorization of comparing the ui with population
+            if (popval[pp[min_id]]< tempval[i]){
+              pop[pp[min_id], ] <- ui[i, , drop = FALSE]
+              popval[pp[min_id]] <- tempval[i]
+            }
+          }
+          ##########################################################################
+
+          ##########################################################################
+          #### vectorization of comparing the ui with population
 
 
-      ##########################################################################
+          ##########################################################################
 
-      # update index of the global best
-      ibest <- which.max(popval)
+          # update index of the global best
+          ibest <- which.max(popval)
 
   }
 
@@ -298,11 +298,11 @@ ncde <-  function(fn, lower, upper, control = list(),...){
       -fn1(par) ## because optim works with min
     #
     temp_optim <- t(sapply(1:NP, FUN =  function(j)optim(par = pop[j, ], fn = fn2, method = "L-BFGS-B", lower = lower, upper = upper,
-                                                         control = control$hybrid_control)))
+                                                         control = control$contr_hybrid)))
     temp_optim <- t(sapply(1:NP, function(j) c(temp_optim[j, ]$par, temp_optim[j, ]$value)))
     #temp_optim <- round(temp_optim, control$digits)
     #temp_optim <- unique(temp_optim)
-    maxima <- temp_optim[, -(D+1)]
+    maxima <- temp_optim[, -(D+1), drop = FALSE]
     maximaval <- -temp_optim[, (D+1)]
   }else{
     maxima <- maximaval <- NA
@@ -312,39 +312,5 @@ ncde <-  function(fn, lower, upper, control = list(),...){
 }
 
 
-###########################################################################################
-###########################################################################################
-
-# fn <- function(xx)
-# {
-#
-#
-#   factor1=(4-2.1*(xx[1]^2)+(xx[1]^4)/3)*(xx[1]^2)+xx[1]*xx[2]
-#   factor2=(-4+4*(xx[2]^2))*(xx[2]^2)
-#   y=-4*(factor1+factor2)
-#
-#   return(y)
-# }
-#
-# lower <- c(-1.9, -1.1)
-# upper <- c(1.9, 1.1)
-#
-#
-# #two maxima
-# fn(c(0.089842, -0.712656))
-# fn(c(-0.089842, 0.712656))
-# #
-# #
-# # control <- list()
-#
-# test <- ncde(fn, lower, upper, control = list(NP = 200, maxiter = 50))
-# max(test$val)
-# #
-# time1 <- proc.time()
-# Rprof(filename = "ncde_rproof.out", line.profiling = T)
-# test <- ncde(fn, lower, upper, control = list(seed = 900, NP = 100))
-# Rprof(NULL)
-# summaryRprof("ncde_rproof.out", lines = "show")
-# time1 <- proc.time() - time1
 
 

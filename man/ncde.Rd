@@ -4,7 +4,7 @@
 \alias{ncde}
 \title{Neighborhood based crowding Differential Evolution (NCDE)  for multimodal optimization}
 \usage{
-ncde(fn, lower, upper, control = list(), ...)
+ncde(fn, lower, upper, control = NULL, ...)
 }
 \arguments{
 \item{fn}{objective function that should be maximized. Should not return \code{NaN}.}
@@ -36,11 +36,10 @@ aims to locate one optimal solution and together the whole
 population is expected to locate multiple optimal solutions in a single run (Qu et al., 2012).\cr
 }
 \description{
-A niching differential evolution (DE) algorithm with neighborhood mutation strategy to solve multimodal optimization problems.
+A niching differential evolution (DE) algorithm with neighborhood mutation strategy to
+  solve multimodal optimization problems.
 }
 \details{
-
-
 The \code{control} argument is a list that can supply any of the following components:
 \describe{
   \item{\code{iter}}{number of iterations. Defaults to \code{200}.}
@@ -53,23 +52,20 @@ The \code{control} argument is a list that can supply any of the following compo
      Defaults to \code{TRUE}. Note that no attempt is done to control the maximal number of
       function evaluations within the local search step (this can be done separately through \code{hybrid.control})
       }
-   \item{\code{hybrid_control}}{List with any additional control parameters to pass on to \code{\link{stats}{optim}}
+   \item{\code{contr_hybrid}}{List with any additional control parameters to pass on to \code{\link{stats}{optim}}
     when using \code{L-BFGS-B} for the local search. Defaults to \code{NULL}.}
 }
 
 The DE strategy is 'DE/rand/1'.\cr
-}
-\note{
-The function is maximized.\cr
-
-
-Check whether \code{fn} does not return any \code{NaN}.\cr
-
+\code{fn} is maximized.\cr
+The benchmarks show that \code{\link{ncde}} is more efficient than \code{\link{ferpsols}}
+in finding all local maxima. \cr
+\code{fn} must not return any \code{NaN}.\cr
 The only stopping rule is the number of iterations.\cr
 
 The implemented algorithm here slightly differs from the original
  MATLAB code in a way that the off-springs for all \code{NP} members calculated by vectorization (\code{sapply})
-  and not with \code{for} loop as the original MATLAB code.
+  and not with \code{for} loop as the original MATLAB code.\cr
 }
 \examples{
 ####################################################################################
@@ -151,6 +147,6 @@ persp(x, y, z = outer(X = x, Y = y, FUN =Shubert_plot))
 }
 \references{
 Qu, B. Y., Suganthan, P. N., & Liang, J. J. (2012). Differential evolution with neighborhood mutation for multimodal optimization. IEEE transactions on evolutionary computation, 16(5), 601-614.\cr
- Based on a MATLAB code that can be found in Suganthan's home page.
+ Based on  MATLAB code that can be found in Suganthan's home page.
 }
 

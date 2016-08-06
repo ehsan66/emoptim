@@ -54,15 +54,14 @@ The \code{control} argument is a list that can supply any of the following compo
      Defaults to \code{TRUE}. Note that no attempt is done to control the maximal number of
       function evaluations within the local search step (this can be done separately through \code{hybrid.control})
       }
-   \item{\code{hybrid_control}}{List with any additional control parameters to pass on to \code{\link{stats}{optim}}
+   \item{\code{contr_hybrid}}{List with any additional control parameters to pass on to \code{\link{stats}{optim}}
     when using \code{L-BFGS-B} for the local search. Defaults to \code{NULL}.}
 }
-}
-\note{
-The function is maximized.\cr
 
-Check whether \code{fn} does not return any \code{NaN}.\cr
-
+\code{fn} is maximized.\cr
+This function is efficient when the purpose is finding all global maxima.
+Please use \code{\link{ncde}} to find all local maxima.\cr
+\code{fn} must not return any \code{NaN}.\cr
 The only stopping rule is the number of iterations.
 }
 \examples{
@@ -147,6 +146,6 @@ Qu, B. Y., Liang, J. J., & Suganthan, P. N. (2012). Niching particle swarm optim
 
  Li, X. (2007, July). A multimodal particle swarm optimizer based on fitness Euclidean-distance ratio. In Proceedings of the 9th annual conference on Genetic and evolutionary computation (pp. 78-85). ACM. \cr
 
- Based on a MATLAB code that can be found in Suganthan's home page.
+ Based on MATLAB code that can be found in Suganthan's home page.
 }
 

@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+src/*.o
+src/*.so
+src/*.dll
+myexample2.R
+mybenchmarks.R
+.Rbuildignore
+.DS_Store

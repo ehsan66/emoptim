@@ -8,7 +8,6 @@ DE <- function(target, newpop, bestpop, st = 2, SF = .9, CR = .1, lower, upper, 
   # SF: differential weighting factor from interval [0,2]
   # return a vector of trial
 
-
   pm_id <- sample(1:dim(newpop)[1], size = 5, replace = FALSE)
   pm1 <- newpop[pm_id[1], ]
   pm2 <- newpop[pm_id[2], ]
